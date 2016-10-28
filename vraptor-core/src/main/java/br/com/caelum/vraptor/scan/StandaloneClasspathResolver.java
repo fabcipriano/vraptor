@@ -140,4 +140,8 @@ public class StandaloneClasspathResolver implements ClasspathResolver {
 		}
 		return webxml;
 	}
+
+    public URL findWebLibClassesLocation() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

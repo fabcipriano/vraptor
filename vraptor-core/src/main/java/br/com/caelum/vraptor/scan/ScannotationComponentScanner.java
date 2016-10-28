@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+      
 import org.scannotation.AnnotationDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +93,7 @@ public class ScannotationComponentScanner implements ComponentScanner {
 
     private void scanPackage(String basePackage, AnnotationDB db, ClasspathResolver resolver) throws IOException {
         String resource = basePackage.replace('.', '/');
+        URL webLibClassesLocation = resolver.findWebLibClassesLocation();
         Enumeration<URL> urls = resolver.getClassLoader().getResources(resource);
         if (!urls.hasMoreElements()) {
             logger.error("There's no occurence of package {} in classpath", basePackage);
@@ -101,18 +102,31 @@ public class ScannotationComponentScanner implements ComponentScanner {
         do {
             URL url = urls.nextElement();
 
-            String file = toFileName(resource, url);
+            String filenameJar = extractShortFilenameJar(resource, url);
+            
+            URL file = new URL(webLibClassesLocation.toString() + filenameJar);
+            
+            logger.info("scanning fullpath filenameJar {} package", file);
 
-            db.scanArchives(new URL(file));
+            db.scanArchives(file);
         } while (urls.hasMoreElements());
+    }
+
+    private String extractShortFilenameJar(String resource, URL url) {
+        String filename = toFileName(resource, url);
+        if (filename.endsWith("/")) {
+            filename = filename.substring(0, filename.length()-1);
+        }
+        filename = filename.substring(filename.lastIndexOf("/") + 1);
+        return filename;
     }
 
     private String toFileName(String resource, URL url) {
         String file = url.getFile().substring(0, url.getFile().length() - resource.length() - 1).replaceAll("(!)(/)?$", "");
 
-        if (!file.startsWith("file:")) {
-            file = "file:" + file;
-        }
+//        if (!file.startsWith("vfs:")) {
+//            file = "vfs:" + file;
+//        }
         return file;
     }
 

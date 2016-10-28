@@ -32,6 +32,13 @@ public interface ClasspathResolver {
 	 * @return WEB-INF/classes location
 	 */
 	URL findWebInfClassesLocation();
+        
+	/**
+	 * Where is WEB-INF/lib?
+	 *
+	 * @return WEB-INF/lib location
+	 */
+        URL findWebLibClassesLocation();
 
 	/**
 	 * Find all base packages, including the ones using the new META-INF configuration

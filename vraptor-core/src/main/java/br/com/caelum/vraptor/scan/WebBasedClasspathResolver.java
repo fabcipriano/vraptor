@@ -47,7 +47,8 @@ public class WebBasedClasspathResolver implements ClasspathResolver {
 
 	public URL findWebInfClassesLocation() {
 		try {
-			String webInfClassesDir = servletContext.getRealPath("/WEB-INF/classes");
+
+                    String webInfClassesDir = servletContext.getRealPath("/WEB-INF/classes");
 			if (webInfClassesDir != null) {
 				return new URL("file:" + webInfClassesDir + "/");
 			} else {
@@ -72,4 +73,17 @@ public class WebBasedClasspathResolver implements ClasspathResolver {
 		new StandaloneClasspathResolver().getPackagesFromPluginsJARs(packages);
 		return packages;
 	}
+
+    public URL findWebLibClassesLocation() {
+        try {
+            String webLibClassesDir = servletContext.getRealPath("/WEB-INF/lib");
+            if (webLibClassesDir != null) {
+                return new URL("file:" + webLibClassesDir + "/");
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new ScannerException("Could not determine WEB-INF/classes location", e);
+        }
+    }
 }
